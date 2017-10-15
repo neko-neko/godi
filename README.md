@@ -50,7 +50,7 @@ type ExampleTarget struct {
 }
 
 func main() {
-	inj := NewInjector()
+	inj := inject.NewInjector()
 	inj.Provide(&ExampleInterfaceImpl{})
 
 	var target *ExampleTarget = &ExampleTarget{}
