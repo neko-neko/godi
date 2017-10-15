@@ -3,11 +3,13 @@ package container_test
 import (
 	"reflect"
 	"testing"
+
+	"github.com/neko-neko/godi/internal/container"
 )
 
 // TestNewContainer return not nil?
 func TestNewContainer(t *testing.T) {
-	c := NewContainer()
+	c := container.NewContainer()
 	if c == nil {
 		t.Error(`NewContainer() = nil`)
 	}
@@ -15,7 +17,7 @@ func TestNewContainer(t *testing.T) {
 
 // TestAdd put item to container?
 func TestAdd(t *testing.T) {
-	c := NewContainer()
+	c := container.NewContainer()
 
 	object := struct{}{}
 	key := reflect.TypeOf(object)
@@ -29,7 +31,7 @@ func TestAdd(t *testing.T) {
 
 // TestGet return valid value?
 func TestGet(t *testing.T) {
-	c := NewContainer()
+	c := container.NewContainer()
 
 	object := struct{}{}
 	key := reflect.TypeOf(object)

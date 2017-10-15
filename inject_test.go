@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/neko-neko/godi"
 )
 
 // ExampleLogger logger mock
@@ -34,7 +36,7 @@ type ExampleTarget struct {
 
 // TestNewInjector verify return not nil?
 func TestNewInjector(t *testing.T) {
-	inj := NewInjector()
+	inj := inject.NewInjector()
 	if inj == nil {
 		t.Error(`NewInjector() = nil`)
 	}
@@ -42,7 +44,7 @@ func TestNewInjector(t *testing.T) {
 
 // TestNewInjectorWithLogger verify return not nil and contains Logger?
 func TestNewInjectorWithLogger(t *testing.T) {
-	inj := NewInjectorWithLogger(&ExampleLogger{})
+	inj := inject.NewInjectorWithLogger(&ExampleLogger{})
 	if inj.debugLogger == nil {
 		t.Error(`NewInjectorWithLogger(&TestLogger{}) = nil`)
 	}
@@ -66,7 +68,7 @@ func TestProvide(t *testing.T) {
 		},
 	)
 
-	inj := NewInjector()
+	inj := inject.NewInjector()
 	inj.Provide(dependencies...)
 	for _, e := range dependencies {
 		if reflect.ValueOf(e) != inj.container.Get(reflect.TypeOf(e)) {
@@ -89,7 +91,7 @@ func TestInject(t *testing.T) {
 	}
 	var target *TestInjectTarget = &TestInjectTarget{}
 
-	inj := NewInjector()
+	inj := inject.NewInjector()
 	inj.Provide(dependency)
 	inj.Inject(target)
 
@@ -100,7 +102,7 @@ func TestInject(t *testing.T) {
 
 // ExampleNewInjectorWithLogger
 func ExampleNewInjectorWithLogger() {
-	inj := NewInjectorWithLogger(&ExampleLogger{})
+	inj := inject.NewInjectorWithLogger(&ExampleLogger{})
 	inj.Inject()
 
 	// Output:
@@ -109,7 +111,7 @@ func ExampleNewInjectorWithLogger() {
 
 // ExampleInject
 func ExampleInjector_Inject() {
-	inj := NewInjector()
+	inj := inject.NewInjector()
 	inj.Provide(&ExampleInterfaceImpl{})
 
 	var target *ExampleTarget = &ExampleTarget{}
