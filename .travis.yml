@@ -7,10 +7,11 @@ go:
 os:
   - linux
 
-script:
-  - go test -v -race -parallel 5 -coverprofile=coverage.txt -covermode=atomic ./
-
 before_install:
-  - pip install --user codecov
+  - go get -t -v ./...
+
+script:
+  - ./go.test.sh
+
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
