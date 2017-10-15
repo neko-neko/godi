@@ -1,5 +1,5 @@
 # godi
-[![GoDoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](http://godoc.org/github.com/neko-neko/godi)
+[![GoDoc](https://godoc.org/github.com/neko-neko/godi?status.svg)](https://godoc.org/github.com/neko-neko/godi)
 [![Build Status](https://travis-ci.org/neko-neko/godi.svg?branch=master)](https://travis-ci.org/neko-neko/godi)
 [![codecov](https://codecov.io/gh/neko-neko/godi/branch/master/graph/badge.svg)](https://codecov.io/gh/neko-neko/godi)
 [![Go Report Card](https://goreportcard.com/badge/github.com/neko-neko/godi)](https://goreportcard.com/report/github.com/neko-neko/godi)
@@ -26,34 +26,38 @@ $ go get github.com/neko-neko/godi
 package main
 
 import (
-	"github.com/neko-neko/godi"
 	"fmt"
+
+	"github.com/neko-neko/godi"
 )
 
-type Dependency struct {
-	Num int
-	Message string
+// ExampleInterface
+type ExampleInterface interface {
+	Do()
 }
 
-type InjectTarget struct {
-	Dep *Dependency `inject:""`
+// ExampleInterfaceImpl
+type ExampleInterfaceImpl struct{}
+
+// Do is example impl
+func (e *ExampleInterfaceImpl) Do() {
+	fmt.Println("Hello example")
+}
+
+// ExampleTarget is example inject target
+type ExampleTarget struct {
+	Dep ExampleInterface `inject:""`
 }
 
 func main() {
-	var dependency *Dependency = &Dependency{
-		Num: 100,
-		Message: "Hello depends",
-	}
-	var target *InjectTarget = &InjectTarget{}
+	inj := NewInjector()
+	inj.Provide(&ExampleInterfaceImpl{})
 
-	inj := inject.NewInjector()
-	inj.Provide(dependency)
-	err := inj.Inject(target)
-	if err != nil {
-		panic(err)
-	}
+	var target *ExampleTarget = &ExampleTarget{}
+	inj.Inject(target)
+	target.Dep.Do()
 
-	fmt.Println(target.Dep.Num)
-	fmt.Println(target.Dep.Message)
+	// Output:
+	// Hello example
 }
 ```
