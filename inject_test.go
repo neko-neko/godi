@@ -1,9 +1,9 @@
 package inject
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
-	"fmt"
 )
 
 // ExampleLogger logger mock
@@ -20,7 +20,7 @@ type ExampleInterface interface {
 }
 
 // ExampleInterfaceImpl
-type ExampleInterfaceImpl struct {}
+type ExampleInterfaceImpl struct{}
 
 // Do is example impl
 func (e *ExampleInterfaceImpl) Do() {
@@ -108,7 +108,7 @@ func ExampleNewInjectorWithLogger() {
 }
 
 // ExampleInject
-func ExampleInject() {
+func ExampleInjector_Inject() {
 	inj := NewInjector()
 	inj.Provide(&ExampleInterfaceImpl{})
 
