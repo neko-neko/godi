@@ -1,4 +1,6 @@
 # godi
+[![Build Status](https://travis-ci.org/neko-neko/godi.svg?branch=master)](https://travis-ci.org/neko-neko/godi)
+[![codecov](https://codecov.io/gh/neko-neko/godi/branch/master/graph/badge.svg)](https://codecov.io/gh/neko-neko/godi)
 [![Go Report Card](https://goreportcard.com/badge/github.com/neko-neko/godi)](https://goreportcard.com/report/github.com/neko-neko/godi)
 [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/neko-neko/godi/master/LICENSE)
 
