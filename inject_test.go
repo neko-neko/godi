@@ -1,202 +1,121 @@
 package inject
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
+	"fmt"
 )
 
-// TestLogger logger mock
-type TestLogger struct {
+// ExampleLogger logger mock
+type ExampleLogger struct {
 }
 
-func (l *TestLogger) Debugf(format string, v ...interface{}) {
+func (e *ExampleLogger) Debugf(format string, v ...interface{}) {
+	fmt.Printf(format, v...)
 }
 
-// TestDependency1 is depends object
-type TestDependency1 struct {
-	Num     int
-	Message string
+// ExampleInterface
+type ExampleInterface interface {
+	Do()
 }
 
-// TestDependency2 is depends object
-type TestDependency2 struct {
-	Num     int
-	Message string
+// ExampleInterfaceImpl
+type ExampleInterfaceImpl struct {}
+
+// Do is example impl
+func (e *ExampleInterfaceImpl) Do() {
+	fmt.Println("Hello example")
 }
 
-// TestInjectTarget1 is injection target object
-type TestInjectTarget1 struct {
-	Dep *TestDependency1 `inject:""`
-}
-
-// TestInjectTarget2 is injection target object
-type TestInjectTarget2 struct {
-	Dep TestDependency1 `inject:""`
-}
-
-// TestInjectTarget3 is injection target object
-type TestInjectTarget3 struct {
-	Dep int `inject:""`
-}
-
-// TestInjectTarget4 is injection target object
-type TestInjectTarget4 struct {
-	Dep *int `inject:""`
+// ExampleTarget is example inject target
+type ExampleTarget struct {
+	Dep ExampleInterface `inject:""`
 }
 
 // TestNewInjector verify return not nil?
 func TestNewInjector(t *testing.T) {
 	inj := NewInjector()
 	if inj == nil {
-		t.Error("NewContainer return nil")
+		t.Error(`NewInjector() = nil`)
 	}
 }
 
 // TestNewInjectorWithLogger verify return not nil and contains Logger?
 func TestNewInjectorWithLogger(t *testing.T) {
-	inj := NewInjectorWithLogger(&TestLogger{})
+	inj := NewInjectorWithLogger(&ExampleLogger{})
 	if inj.debugLogger == nil {
-		t.Error("NewInjectorWithLogger logger return nil")
+		t.Error(`NewInjectorWithLogger(&TestLogger{}) = nil`)
 	}
 }
 
-// TestInjectorProvide verify put container a object?
-func TestInjectorProvideObjectIntoContainer(t *testing.T) {
+// TestProvide verify put container objects?
+func TestProvide(t *testing.T) {
+	type TestDependency1 struct {
+		Message string
+	}
+	type TestDependency2 struct {
+		Num int
+	}
+	var dependencies []interface{}
+	dependencies = append(dependencies,
+		&TestDependency1{
+			Message: "Hello inject",
+		},
+		&TestDependency2{
+			Num: 100,
+		},
+	)
+
 	inj := NewInjector()
-	var dependency *TestDependency1 = &TestDependency1{
-		Num:     100,
+	inj.Provide(dependencies...)
+	for _, e := range dependencies {
+		if reflect.ValueOf(e) != inj.container.Get(reflect.TypeOf(e)) {
+			t.Errorf(`inj.Provide(%v) put invalid value(%v)`, reflect.ValueOf(e), inj.container.Get(reflect.TypeOf(e)))
+		}
+	}
+}
+
+// TestInject can set inject dependency?
+func TestInject(t *testing.T) {
+	type TestDependency struct {
+		Message string
+	}
+	var dependency *TestDependency = &TestDependency{
 		Message: "Hello inject",
 	}
-	inj.Provide(dependency)
-	containerObj := inj.container.Get(reflect.TypeOf(dependency))
 
-	if reflect.ValueOf(dependency) != containerObj {
-		t.Error("Provide put invalid value")
+	type TestInjectTarget struct {
+		Dep *TestDependency `inject:""`
 	}
-}
-
-// TestInjectorProvide verify put container objects?
-func TestInjectorProvideObjectsIntoContainer(t *testing.T) {
-	inj := NewInjector()
-	var dependency1 *TestDependency1 = &TestDependency1{
-		Num:     1,
-		Message: "Hello",
-	}
-	var dependency2 *TestDependency2 = &TestDependency2{
-		Num:     2,
-		Message: "Inject",
-	}
-	inj.Provide(dependency1, dependency2)
-
-	containerObj1 := inj.container.Get(reflect.TypeOf(dependency1))
-	if reflect.ValueOf(dependency1) != containerObj1 {
-		t.Error("Provide put invalid value")
-	}
-
-	containerObj2 := inj.container.Get(reflect.TypeOf(dependency2))
-	if reflect.ValueOf(dependency2) != containerObj2 {
-		t.Error("Provide put invalid value")
-	}
-}
-
-// TestInjectorProvide verify inject depends
-func TestInjectorProvide(t *testing.T) {
-	var dependency *TestDependency1 = &TestDependency1{
-		Num:     100,
-		Message: "Hello inject",
-	}
-	var target *TestInjectTarget1 = &TestInjectTarget1{}
+	var target *TestInjectTarget = &TestInjectTarget{}
 
 	inj := NewInjector()
 	inj.Provide(dependency)
-	err := inj.Inject(target)
-	if err != nil {
-		t.Error(err)
-	}
-	if target.Dep.Num != 100 {
-		t.Errorf("inject invalid inject value for inj.Dep.Num: %d", target.Dep.Num)
-	}
-	if target.Dep.Message != "Hello inject" {
-		t.Errorf("inject invalid inject value for inj.Dep.Message: %s", target.Dep.Message)
+	inj.Inject(target)
+
+	if target.Dep != dependency {
+		t.Errorf(`inj.Inject(%v) could not inject dependency(%v)`, target, dependency)
 	}
 }
 
-// ExampleInjectStructType inject type of struct testing
-func ExampleInjectStructType() {
-	var dependency TestDependency1 = TestDependency1{
-		Num:     100,
-		Message: "Hello inject",
-	}
-	var target *TestInjectTarget2 = &TestInjectTarget2{}
+// ExampleNewInjectorWithLogger
+func ExampleNewInjectorWithLogger() {
+	inj := NewInjectorWithLogger(&ExampleLogger{})
+	inj.Inject()
 
-	inj := NewInjector()
-	inj.Provide(dependency)
-	err := inj.Inject(target)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(target.Dep.Num)
-	fmt.Println(target.Dep.Message)
-
-	// Unordered output:
-	// 100
-	// Hello inject
+	// Output:
+	// [godi-debug] call dependency injection
 }
 
-// ExampleInjectStructPointerType inject type of struct pointer testing
-func ExampleInjectStructPointerType() {
-	var dependency *TestDependency1 = &TestDependency1{
-		Num:     100,
-		Message: "Hello inject",
-	}
-	var target *TestInjectTarget1 = &TestInjectTarget1{}
-
+// ExampleInject
+func ExampleInject() {
 	inj := NewInjector()
-	inj.Provide(dependency)
-	err := inj.Inject(target)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(target.Dep.Num)
-	fmt.Println(target.Dep.Message)
+	inj.Provide(&ExampleInterfaceImpl{})
 
-	// Unordered output:
-	// 100
-	// Hello inject
-}
+	var target *ExampleTarget = &ExampleTarget{}
+	inj.Inject(target)
+	target.Dep.Do()
 
-// ExampleInjectIntType inject type of int testing
-func ExampleInjectIntType() {
-	var dependency int = 5
-	var target *TestInjectTarget3 = &TestInjectTarget3{}
-
-	inj := NewInjector()
-	inj.Provide(dependency)
-	err := inj.Inject(target)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(target.Dep)
-
-	// Unordered output:
-	// 5
-}
-
-// ExampleInjectIntPointerType inject type of int pointer testing
-func ExampleInjectIntPointerType() {
-	var num int = 5
-	var dependency *int = &num
-	var target *TestInjectTarget4 = &TestInjectTarget4{}
-
-	inj := NewInjector()
-	inj.Provide(dependency)
-	err := inj.Inject(target)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(*target.Dep)
-
-	// Unordered output:
-	// 5
+	// Output:
+	// Hello example
 }

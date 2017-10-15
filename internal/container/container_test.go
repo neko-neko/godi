@@ -9,12 +9,12 @@ import (
 func TestNewContainer(t *testing.T) {
 	c := NewContainer()
 	if c == nil {
-		t.Error("NewContainer return nil")
+		t.Error(`NewContainer() = nil`)
 	}
 }
 
-// TestAddPutItem put item to container?
-func TestAddPutItem(t *testing.T) {
+// TestAdd put item to container?
+func TestAdd(t *testing.T) {
 	c := NewContainer()
 
 	object := struct{}{}
@@ -23,12 +23,12 @@ func TestAddPutItem(t *testing.T) {
 	c.Add(key, val)
 
 	if c[key] != val {
-		t.Error("Add stores an invalid value in the container")
+		t.Error(`c.Add(key, val) != val`)
 	}
 }
 
-// TestGetItem return valid value?
-func TestGetItem(t *testing.T) {
+// TestGet return valid value?
+func TestGet(t *testing.T) {
 	c := NewContainer()
 
 	object := struct{}{}
@@ -37,6 +37,6 @@ func TestGetItem(t *testing.T) {
 	c.Add(key, val)
 
 	if c.Get(key) != val {
-		t.Error("Get return invalid value")
+		t.Error(`c.Get(key) != val`)
 	}
 }
