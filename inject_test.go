@@ -45,7 +45,7 @@ func TestNewInjector(t *testing.T) {
 // TestNewInjectorWithLogger verify return not nil and contains Logger?
 func TestNewInjectorWithLogger(t *testing.T) {
 	inj := inject.NewInjectorWithLogger(&ExampleLogger{})
-	if inj.debugLogger == nil {
+	if inj.DebugLogger() == nil {
 		t.Error(`NewInjectorWithLogger(&TestLogger{}) = nil`)
 	}
 }
@@ -71,8 +71,8 @@ func TestProvide(t *testing.T) {
 	inj := inject.NewInjector()
 	inj.Provide(dependencies...)
 	for _, e := range dependencies {
-		if reflect.ValueOf(e) != inj.container.Get(reflect.TypeOf(e)) {
-			t.Errorf(`inj.Provide(%v) put invalid value(%v)`, reflect.ValueOf(e), inj.container.Get(reflect.TypeOf(e)))
+		if reflect.ValueOf(e) != inj.Container().Get(reflect.TypeOf(e)) {
+			t.Errorf(`inj.Provide(%v) put invalid value(%v)`, reflect.ValueOf(e), inj.Container().Get(reflect.TypeOf(e)))
 		}
 	}
 }
@@ -98,26 +98,4 @@ func TestInject(t *testing.T) {
 	if target.Dep != dependency {
 		t.Errorf(`inj.Inject(%v) could not inject dependency(%v)`, target, dependency)
 	}
-}
-
-// ExampleNewInjectorWithLogger
-func ExampleNewInjectorWithLogger() {
-	inj := inject.NewInjectorWithLogger(&ExampleLogger{})
-	inj.Inject()
-
-	// Output:
-	// [godi-debug] call dependency injection
-}
-
-// ExampleInject
-func ExampleInjector_Inject() {
-	inj := inject.NewInjector()
-	inj.Provide(&ExampleInterfaceImpl{})
-
-	var target *ExampleTarget = &ExampleTarget{}
-	inj.Inject(target)
-	target.Dep.Do()
-
-	// Output:
-	// Hello example
 }

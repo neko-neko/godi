@@ -1,6 +1,8 @@
 package inject_test
 
-import "github.com/neko-neko/godi"
+import (
+	"github.com/neko-neko/godi"
+)
 
 // ExampleNewInjectorWithLogger
 func ExampleNewInjectorWithLogger() {
