@@ -122,7 +122,7 @@ func TestInjectorProvide(t *testing.T) {
 	}
 }
 
-// Inject type of struct testing
+// ExampleInjectStructType inject type of struct testing
 func ExampleInjectStructType() {
 	var dependency TestDependency1 = TestDependency1{
 		Num:     100,
@@ -144,7 +144,7 @@ func ExampleInjectStructType() {
 	// Hello inject
 }
 
-// Inject type of struct pointer testing
+// ExampleInjectStructPointerType inject type of struct pointer testing
 func ExampleInjectStructPointerType() {
 	var dependency *TestDependency1 = &TestDependency1{
 		Num:     100,
@@ -166,7 +166,7 @@ func ExampleInjectStructPointerType() {
 	// Hello inject
 }
 
-// Inject type of int testing
+// ExampleInjectIntType inject type of int testing
 func ExampleInjectIntType() {
 	var dependency int = 5
 	var target *TestInjectTarget3 = &TestInjectTarget3{}
@@ -183,7 +183,7 @@ func ExampleInjectIntType() {
 	// 5
 }
 
-// Inject type of int pointer testing
+// ExampleInjectIntPointerType inject type of int pointer testing
 func ExampleInjectIntPointerType() {
 	var num int = 5
 	var dependency *int = &num

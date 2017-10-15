@@ -1,8 +1,8 @@
 package container
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
 // TestNewContainer return not nil?
