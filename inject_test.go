@@ -147,3 +147,23 @@ func TestInjectCouldNotFoundDependency(t *testing.T) {
 		t.Errorf(`inj.Inject(%v) if container has not no match memeber then return no error(%v)`, target, err)
 	}
 }
+
+// TestCanNotSupportTargetType
+func TestCanNotSupportTargetType(t *testing.T) {
+	type TestDependency struct {
+		Message string
+	}
+	type TestInjectTarget struct {
+		Dep *TestDependency `inject:""`
+	}
+	var target TestInjectTarget = TestInjectTarget{}
+
+	inj := inject.NewInjector()
+	err := inj.Inject(target)
+	if err == nil {
+		t.Fatalf(`inj.Inject(%v) return no error`, target)
+	}
+	if target.Dep != nil {
+		t.Errorf(`inj.Inject(%v) pass for can not support type then return no error(%v)`, target, err)
+	}
+}
