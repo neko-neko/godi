@@ -96,9 +96,6 @@ func (inj *Injector) loadDep(refType reflect.Type) (reflect.Value, error) {
 
 	for k, v := range inj.container {
 		if k.Implements(refType) {
-			if !v.IsValid() {
-				return v, fmt.Errorf("could not found inject for type: %s", v.Type())
-			}
 			return v, nil
 		}
 	}
